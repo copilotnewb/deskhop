@@ -25,6 +25,9 @@
 // Interface 2
 #define REPORT_ID_VENDOR 6
 
+// Host control (present on the main HID interface)
+#define REPORT_ID_SWITCH 0x10
+
 
 #define DEVICE_DESCRIPTOR(vid, pid) \
 {.bLength         = sizeof(tusb_desc_device_t),\
@@ -149,6 +152,21 @@
     HID_USAGE       ( 0x10                                )  ,\
     HID_OUTPUT       ( HID_DATA | HID_ARRAY | HID_ABSOLUTE ) ,\
   HID_COLLECTION_END \
+
+// Minimal 1-byte Vendor Feature report for host switching
+#define TUD_HID_REPORT_DESC_VENDOR_SWITCH(...) \
+  HID_USAGE_PAGE_N ( HID_USAGE_PAGE_VENDOR, 2 )             ,\
+  HID_USAGE      ( 0x21 )                                   ,\
+  HID_COLLECTION ( HID_COLLECTION_APPLICATION )             ,\
+    /* Report ID if any */                                   \
+    __VA_ARGS__                                              \
+    HID_LOGICAL_MIN ( 0x00 )                                 ,\
+    HID_LOGICAL_MAX ( 0xFF )                                 ,\
+    HID_REPORT_COUNT ( 1 )                                   ,\
+    HID_REPORT_SIZE  ( 8 )                                   ,\
+    HID_USAGE       ( 0x21 )                                 ,\
+    HID_FEATURE     ( HID_DATA | HID_VARIABLE | HID_ABSOLUTE ),\
+  HID_COLLECTION_END
 
 #define HID_USAGE_DIGITIZER 0x01
 
