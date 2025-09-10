@@ -57,9 +57,40 @@ void tud_hid_set_report_cb(uint8_t instance,
             return;
 
         process_packet(packet, &global_state);
+        return;
     }
 
-    /* Only other set report we care about is LED state change, and that's exactly 1 byte long */
+    /* ---- Host switch command (Feature or Output report), always available on the main HID iface ---- */
+    if (instance == ITF_NUM_HID &&
+        report_id == REPORT_ID_SWITCH &&
+        bufsize >= 1 &&
+        (report_type == HID_REPORT_TYPE_FEATURE || report_type == HID_REPORT_TYPE_OUTPUT)) {
+
+        uint8_t cmd = buffer[0];
+
+        /* Respect switch lock if enabled */
+        if (global_state.switch_lock) return;
+
+        switch (cmd) {
+            case 0x01: /* toggle */
+                set_active_output(&global_state,
+                    (global_state.active_output == OUTPUT_A) ? OUTPUT_B : OUTPUT_A);
+                break;
+            case 0x02: /* force A */
+                set_active_output(&global_state, OUTPUT_A);
+                break;
+            case 0x03: /* force B */
+                set_active_output(&global_state, OUTPUT_B);
+                break;
+            default:
+                /* ignore unknown commands */
+                break;
+        }
+
+        return;
+    }
+
+    /* Keyboard LED state change (standard Output report) */
     if (report_id != REPORT_ID_KEYBOARD || bufsize != 1 || report_type != HID_REPORT_TYPE_OUTPUT)
         return;
 
