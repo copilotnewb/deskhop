@@ -1,3 +1,18 @@
+vibe coded fork to allow commands from pc to deskhop for auto switching
+
+bash for windows py file
+# Toggle (payload 0x01)
+python deskhop_switch_ctypes.py --vid 0x1209 --pid 0xC000 --cmd toggle
+
+# Force output A (0x02)
+python deskhop_switch_ctypes.py --vid 0x1209 --pid 0xC000 --cmd A
+
+# Force output B (0x03)
+python deskhop_switch_ctypes.py --vid 0x1209 --pid 0xC000 --cmd B
+
+# Or send a raw payload byte with a custom Report ID
+python deskhop_switch_ctypes.py --vid 0x1209 --pid 0xC000 --report-id 0x10 --value 0x01
+
 # DeskHop - Fast Desktop Switching
 
 Did you ever notice how, in the crazy world of tech, there's always that one quirky little project trying to solve a problem so niche that its only competitors might be a left-handed screwdriver and a self-hiding alarm clock?
