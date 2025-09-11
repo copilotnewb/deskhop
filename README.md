@@ -1,18 +1,18 @@
-vibe coded fork to allow commands from pc to deskhop for auto switching
+# vibe coded fork to allow commands from pc to deskhop for auto switching
 
 run kvm_gaze_switch.py for auto control with gaze/head rotation, make sure deskhop_switch_ctypes.py is in the same folder
 
 bash for windows deskhop_switch_ctypes.py for manual control
-# Toggle (payload 0x01)
+Toggle (payload 0x01)
 python deskhop_switch_ctypes.py --vid 0x1209 --pid 0xC000 --cmd toggle
 
-# Force output A (0x02)
+Force output A (0x02)
 python deskhop_switch_ctypes.py --vid 0x1209 --pid 0xC000 --cmd A
 
-# Force output B (0x03)
+Force output B (0x03)
 python deskhop_switch_ctypes.py --vid 0x1209 --pid 0xC000 --cmd B
 
-# Or send a raw payload byte with a custom Report ID
+Or send a raw payload byte with a custom Report ID
 python deskhop_switch_ctypes.py --vid 0x1209 --pid 0xC000 --report-id 0x10 --value 0x01
 
 # DeskHop - Fast Desktop Switching
