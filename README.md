@@ -51,7 +51,7 @@ The optional `kvm_gaze_switch.py` script uses the same helper for camera/head-po
 This build adds three configurable macro slots in the web configuration page. The default macro is:
 
 ```text
-Shift + middle click -> repeat normal left click every 50 ms
+Shift + middle click -> repeat normal left click every 125 ms
 ```
 
 While the macro is active, DeskHop consumes the trigger middle-click and suppresses the trigger Shift modifier before forwarding reports to the computer. That means the generated output is a regular left click, not a middle click or Shift-click.
@@ -66,7 +66,7 @@ Each macro slot currently supports repeated mouse-click output:
 - `Output Mouse Button`: mouse button DeskHop emits
 - `Interval (ms)`: delay between repeated clicks
 
-After editing the WebUI templates, regenerate `webconfig/config.htm` before building firmware so the on-device config page includes the macro controls.
+After editing the WebUI templates, regenerate `webconfig/config.htm`, rebuild `disk/disk.img`, then build firmware so the on-device config page includes the macro controls.
 
 ------
 

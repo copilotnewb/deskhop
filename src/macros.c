@@ -41,7 +41,7 @@ uint8_t macro_suppressed_modifiers(device_t *state) {
     return state->macro_suppressed_modifiers;
 }
 
-void update_macro_state(device_t *state, mouse_values_t *mouse) {
+static void evaluate_macro_state(device_t *state, uint8_t mouse_buttons, uint8_t *filtered_buttons) {
     hid_keyboard_report_t keyboard;
     uint8_t active = 0;
     uint8_t suppressed = 0;
@@ -55,12 +55,14 @@ void update_macro_state(device_t *state, mouse_values_t *mouse) {
         if (!macro->enabled || macro->mode == MACRO_MODE_DISABLED)
             continue;
 
-        if (!macro_keyboard_triggered(macro, &keyboard) || !macro_mouse_triggered(macro, mouse))
+        mouse_values_t mouse = {.buttons = mouse_buttons};
+
+        if (!macro_keyboard_triggered(macro, &keyboard) || !macro_mouse_triggered(macro, &mouse))
             continue;
 
         active |= slot_mask;
         suppressed |= macro_trigger_modifiers(macro, &keyboard);
-        mouse->buttons &= ~macro->trigger_buttons;
+        *filtered_buttons &= ~macro->trigger_buttons;
 
         if (!(state->macro_active & slot_mask))
             state->macro_next_run[i] = 0;
@@ -74,32 +76,46 @@ void update_macro_state(device_t *state, mouse_values_t *mouse) {
     state->macro_active = active;
 }
 
-static void queue_macro_mouse_click(device_t *state, macro_config_t *macro) {
+void update_macro_state(device_t *state, mouse_values_t *mouse) {
+    uint8_t filtered_buttons = mouse->buttons;
+
+    evaluate_macro_state(state, mouse->buttons, &filtered_buttons);
+    mouse->buttons = filtered_buttons;
+}
+
+static void queue_macro_mouse_button(device_t *state, macro_config_t *macro, bool pressed) {
     uint8_t buttons = state->mouse_buttons & ~macro->trigger_buttons;
-    mouse_report_t down = {
-        .buttons = buttons | macro->output_buttons,
+    mouse_report_t report = {
+        .buttons = pressed ? (buttons | macro->output_buttons) : buttons,
         .x = state->pointer_x,
         .y = state->pointer_y,
         .mode = ABSOLUTE,
     };
-    mouse_report_t up = down;
-    up.buttons = buttons;
 
     if (state->relative_mouse || state->gaming_mode) {
-        down.mode = RELATIVE;
-        up.mode = RELATIVE;
+        report.mode = RELATIVE;
     }
 
-    output_mouse_report(&down, state);
-    output_mouse_report(&up, state);
+    output_mouse_report(&report, state);
 }
 
 void macro_task(device_t *state) {
     uint64_t now = time_us_64();
+    uint8_t filtered_buttons = state->physical_mouse_buttons;
+
+    evaluate_macro_state(state, state->physical_mouse_buttons, &filtered_buttons);
 
     for (int i = 0; i < MACRO_SLOT_COUNT; i++) {
         uint8_t slot_mask = 1 << i;
         macro_config_t *macro = &state->config.macros[i];
+
+        if (state->macro_buttons_down & slot_mask) {
+            if (!(state->macro_active & slot_mask) || now >= state->macro_release_time[i]) {
+                queue_macro_mouse_button(state, macro, false);
+                state->macro_buttons_down &= ~slot_mask;
+            }
+            continue;
+        }
 
         if (!(state->macro_active & slot_mask))
             continue;
@@ -110,7 +126,14 @@ void macro_task(device_t *state) {
         if (now < state->macro_next_run[i])
             continue;
 
-        queue_macro_mouse_click(state, macro);
-        state->macro_next_run[i] = now + _MS(macro->interval_ms ? macro->interval_ms : 50);
+        if (queue_get_level(&state->mouse_queue) > MACRO_MAX_MOUSE_QUEUE_LEVEL) {
+            state->macro_next_run[i] = now + _MS(macro->interval_ms ? macro->interval_ms : MACRO_DEFAULT_INTERVAL_MS);
+            continue;
+        }
+
+        queue_macro_mouse_button(state, macro, true);
+        state->macro_buttons_down |= slot_mask;
+        state->macro_release_time[i] = now + _MS(MACRO_CLICK_DURATION_MS);
+        state->macro_next_run[i] = now + _MS(macro->interval_ms ? macro->interval_ms : MACRO_DEFAULT_INTERVAL_MS);
     }
 }

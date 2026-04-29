@@ -85,7 +85,7 @@ MACRO_ = [
     FormField(3, "Require Any Modifier", 0, MACRO_MODIFIERS_ANY, "uint8"),
     FormField(4, "Trigger Mouse Button", 0, MACRO_BUTTONS, "uint8"),
     FormField(5, "Output Mouse Button", 1, MACRO_BUTTONS, "uint8"),
-    FormField(6, "Interval (ms)", 50, {"min": 10, "max": 1000}, "uint16", "range"),
+    FormField(6, "Interval (ms)", 125, {"min": 75, "max": 1000}, "uint16", "range"),
 ]
 
 OUTPUT_ = [

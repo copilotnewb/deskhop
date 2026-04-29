@@ -54,7 +54,7 @@ void core1_main() {
         [1] = {.exec = &packet_receiver_task,    .frequency = _TOP()},       // | Receive data over serial from the other board
         [2] = {.exec = &led_blinking_task,       .frequency = _HZ(30)},      // | Check if LED needs blinking
         [3] = {.exec = &screensaver_task,        .frequency = _HZ(120)},     // | Handle "screensaver" movements
-        [4] = {.exec = &macro_task,              .frequency = _HZ(2000)},    // | Run configured macro outputs
+        [4] = {.exec = &macro_task,              .frequency = _HZ(250)},     // | Run configured macro outputs
         [5] = {.exec = &firmware_upgrade_task,   .frequency = _HZ(4000)},    // | Send firmware to the other board if needed
         [6] = {.exec = &heartbeat_output_task,   .frequency = _HZ(1)},       // | Output periodic heartbeats
     };                                                                       // `----- then go back and repeat forever

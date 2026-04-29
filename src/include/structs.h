@@ -119,6 +119,7 @@ typedef struct {
     int16_t pointer_x; // Store and update the location of our mouse pointer
     int16_t pointer_y;
     int16_t mouse_buttons; // Store and update the state of mouse buttons
+    int16_t physical_mouse_buttons; // Raw locally/remote-held mouse buttons before macro filtering
 
     config_t config;       // Device configuration, loaded from flash or defaults used
     queue_t hid_queue_out; // Queue that stores outgoing hid messages
@@ -159,7 +160,9 @@ typedef struct {
 
     uint8_t macro_active;               // Bitmask of active macro slots
     uint8_t macro_suppressed_modifiers; // Modifiers held only to trigger macros
+    uint8_t macro_buttons_down;         // Bitmask of macro slots currently holding output down
     uint64_t macro_next_run[MACRO_SLOT_COUNT];
+    uint64_t macro_release_time[MACRO_SLOT_COUNT];
 
     /* Onboard LED blinky (provide feedback when e.g. mouse connected) */
     int32_t blinks_left;     // How many blink transitions are left

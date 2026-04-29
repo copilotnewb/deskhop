@@ -310,7 +310,7 @@ void process_keyboard_report(uint8_t *raw_report, int length, uint8_t itf, hid_i
     update_kbd_state(state, &new_report, itf);
 
     /* Keyboard modifier changes can start or stop mouse-button macros. */
-    mouse_values_t mouse = {.buttons = state->mouse_buttons};
+    mouse_values_t mouse = {.buttons = state->physical_mouse_buttons};
     update_macro_state(state, &mouse);
 
     /* Check if any hotkey was pressed */

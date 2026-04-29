@@ -324,6 +324,7 @@ void process_mouse_report(uint8_t *raw_report, int len, uint8_t itf, hid_interfa
 
     /* Interpret the mouse HID report, extract and save values we need. */
     extract_report_values(raw_report, len, state, &values, iface);
+    state->physical_mouse_buttons = values.buttons;
 
     /* Macro triggers can consume button presses before normal forwarding. */
     update_macro_state(state, &values);
