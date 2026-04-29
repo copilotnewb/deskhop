@@ -130,6 +130,26 @@
         </div>
 
       </div>
+
+      <div class="row">
+        <div class="column column-20" style="background-color: #d7e5f0; margin-right: 2em;">
+        </div>
+        <div class="column">
+          <h3>Macros</h3>
+
+          {% for item in macro_1 %}
+            {% include "form.html" with context %}
+          {% endfor %}
+
+          {% for item in macro_2 %}
+            {% include "form.html" with context %}
+          {% endfor %}
+
+          {% for item in macro_3 %}
+            {% include "form.html" with context %}
+          {% endfor %}
+        </div>
+      </div>
     </div>
     </section>
   </main>

@@ -52,12 +52,19 @@ hotkey_combo_t hotkeys[] = {
      .acknowledge    = true,
      .action_handler = &toggle_gaming_mode_handler},
 
-    /* Enable screensaver for active output */
+    /* Enable screensaver pong for active output */
     {.modifier       = KEYBOARD_MODIFIER_LEFTCTRL | KEYBOARD_MODIFIER_RIGHTSHIFT,
      .keys           = {HID_KEY_S},
      .key_count      = 1,
      .acknowledge    = true,
-     .action_handler = &enable_screensaver_hotkey_handler},
+     .action_handler = &enable_screensaver_pong_hotkey_handler},
+
+    /* Enable screensaver jitter for active output */
+    {.modifier       = KEYBOARD_MODIFIER_LEFTCTRL | KEYBOARD_MODIFIER_RIGHTSHIFT,
+     .keys           = {HID_KEY_J},
+     .key_count      = 1,
+     .acknowledge    = true,
+     .action_handler = &enable_screensaver_jitter_hotkey_handler},
 
     /* Disable screensaver for active output */
     {.modifier       = KEYBOARD_MODIFIER_LEFTCTRL | KEYBOARD_MODIFIER_RIGHTSHIFT,
@@ -249,6 +256,7 @@ void send_key(hid_keyboard_report_t *report, device_t *state) {
     /* Create a combined report from all device states */
     hid_keyboard_report_t combined_report;
     combine_kbd_states(state, &combined_report);
+    combined_report.modifier &= ~macro_suppressed_modifiers(state);
 
     if (CURRENT_BOARD_IS_ACTIVE_OUTPUT) {
         /* Queue the combined report */
@@ -300,6 +308,10 @@ void process_keyboard_report(uint8_t *raw_report, int length, uint8_t itf, hid_i
 
     /* Update the keyboard state for this device */
     update_kbd_state(state, &new_report, itf);
+
+    /* Keyboard modifier changes can start or stop mouse-button macros. */
+    mouse_values_t mouse = {.buttons = state->mouse_buttons};
+    update_macro_state(state, &mouse);
 
     /* Check if any hotkey was pressed */
     hotkey = check_all_hotkeys(&new_report, state);

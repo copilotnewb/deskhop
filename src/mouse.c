@@ -197,6 +197,7 @@ void switch_virtual_desktop_macos(device_t *state, int direction) {
     mouse_report_t move_relative_one = {
         .x = move,
         .mode = RELATIVE,
+        .buttons = state->mouse_buttons,
     };
 
     output_mouse_report(&edge_position, state);
@@ -323,6 +324,9 @@ void process_mouse_report(uint8_t *raw_report, int len, uint8_t itf, hid_interfa
 
     /* Interpret the mouse HID report, extract and save values we need. */
     extract_report_values(raw_report, len, state, &values, iface);
+
+    /* Macro triggers can consume button presses before normal forwarding. */
+    update_macro_state(state, &values);
 
     /* Calculate and update mouse pointer movement. */
     enum screen_pos_e switch_direction = update_mouse_position(state, &values);

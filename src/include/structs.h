@@ -11,6 +11,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "constants.h"
 #include "flash.h"
 #include "packet.h"
 #include "screen.h"
@@ -39,6 +40,16 @@ typedef struct TU_ATTR_PACKED {
     int8_t pan;
     uint8_t mode;
 } mouse_report_t;
+
+typedef struct TU_ATTR_PACKED {
+    uint8_t enabled;
+    uint8_t mode;
+    uint8_t trigger_mod_all;
+    uint8_t trigger_mod_any;
+    uint8_t trigger_buttons;
+    uint8_t output_buttons;
+    uint16_t interval_ms;
+} macro_config_t;
 
 typedef struct {
     uint8_t tip_pressure;
@@ -80,6 +91,7 @@ typedef struct {
     uint16_t jump_threshold;
 
     output_t output[NUM_SCREENS];
+    macro_config_t macros[MACRO_SLOT_COUNT];
     uint32_t _reserved;
 
     // Keep checksum at the end of the struct
@@ -134,6 +146,7 @@ typedef struct {
     /* Connection status flags */
     bool tud_connected;      // True when TinyUSB device successfully connects
     bool keyboard_connected; // True when our keyboard is connected locally
+    bool mouse_connected;    // True when our mouse is connected locally
 
     /* Feature flags */
     bool mouse_zoom;         // True when "mouse zoom" is enabled
@@ -143,6 +156,10 @@ typedef struct {
     bool gaming_mode;        // True when gaming mode is on (relative passthru + lock)
     bool config_mode_active; // True when config mode is active
     bool digitizer_active;   // True when digitizer Win/Mac workaround is active
+
+    uint8_t macro_active;               // Bitmask of active macro slots
+    uint8_t macro_suppressed_modifiers; // Modifiers held only to trigger macros
+    uint64_t macro_next_run[MACRO_SLOT_COUNT];
 
     /* Onboard LED blinky (provide feedback when e.g. mouse connected) */
     int32_t blinks_left;     // How many blink transitions are left

@@ -61,4 +61,14 @@ const config_t default_config = {
     .hotkey_toggle = HOTKEY_TOGGLE,
     .kbd_led_as_indicator = KBD_LED_AS_INDICATOR,
     .jump_threshold = JUMP_THRESHOLD,
+    .macros = {
+        {
+            .enabled = ENABLE,
+            .mode = MACRO_MODE_MOUSE_REPEAT,
+            .trigger_mod_any = KEYBOARD_MODIFIER_LEFTSHIFT | KEYBOARD_MODIFIER_RIGHTSHIFT,
+            .trigger_buttons = MOUSE_BUTTON_MIDDLE,
+            .output_buttons = MOUSE_BUTTON_LEFT,
+            .interval_ms = 50,
+        },
+    },
 };

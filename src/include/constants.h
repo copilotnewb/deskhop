@@ -24,8 +24,8 @@
 
 #define ITF_NUM_HID        0
 #define ITF_NUM_HID_REL_M  1
-#define ITF_NUM_HID_VENDOR 1
-#define ITF_NUM_MSC        2
+#define ITF_NUM_HID_VENDOR 2
+#define ITF_NUM_MSC        3
 
 /*==============================================================================
  *  Mouse Modes
@@ -50,7 +50,17 @@
 #define JITTER_DISTANCE 2
 #define MOUSE_BOOT_REPORT_LEN 4
 #define MOUSE_ZOOM_SCALING_FACTOR 2
+#define MACRO_SLOT_COUNT 3
 #define NUM_SCREENS 2
+
+/* Mouse button bit masks */
+#define MOUSE_BUTTON_LEFT   0x01
+#define MOUSE_BUTTON_RIGHT  0x02
+#define MOUSE_BUTTON_MIDDLE 0x04
+
+/* Macro modes */
+#define MACRO_MODE_DISABLED     0
+#define MACRO_MODE_MOUSE_REPEAT 1
 
 /*==============================================================================
  *  Utility Macros

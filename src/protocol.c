@@ -59,6 +59,31 @@ const field_map_t api_field_map[] = {
     { 76, false, UINT8,  1, offsetof(device_t, config.enforce_ports) },
     { 77, false, UINT16, 2, offsetof(device_t, config.jump_threshold) },
 
+    /* Macros */
+    { 90, false, UINT8,  1, offsetof(device_t, config.macros[0].enabled) },
+    { 91, false, UINT8,  1, offsetof(device_t, config.macros[0].mode) },
+    { 92, false, UINT8,  1, offsetof(device_t, config.macros[0].trigger_mod_all) },
+    { 93, false, UINT8,  1, offsetof(device_t, config.macros[0].trigger_mod_any) },
+    { 94, false, UINT8,  1, offsetof(device_t, config.macros[0].trigger_buttons) },
+    { 95, false, UINT8,  1, offsetof(device_t, config.macros[0].output_buttons) },
+    { 96, false, UINT16, 2, offsetof(device_t, config.macros[0].interval_ms) },
+
+    { 100, false, UINT8,  1, offsetof(device_t, config.macros[1].enabled) },
+    { 101, false, UINT8,  1, offsetof(device_t, config.macros[1].mode) },
+    { 102, false, UINT8,  1, offsetof(device_t, config.macros[1].trigger_mod_all) },
+    { 103, false, UINT8,  1, offsetof(device_t, config.macros[1].trigger_mod_any) },
+    { 104, false, UINT8,  1, offsetof(device_t, config.macros[1].trigger_buttons) },
+    { 105, false, UINT8,  1, offsetof(device_t, config.macros[1].output_buttons) },
+    { 106, false, UINT16, 2, offsetof(device_t, config.macros[1].interval_ms) },
+
+    { 110, false, UINT8,  1, offsetof(device_t, config.macros[2].enabled) },
+    { 111, false, UINT8,  1, offsetof(device_t, config.macros[2].mode) },
+    { 112, false, UINT8,  1, offsetof(device_t, config.macros[2].trigger_mod_all) },
+    { 113, false, UINT8,  1, offsetof(device_t, config.macros[2].trigger_mod_any) },
+    { 114, false, UINT8,  1, offsetof(device_t, config.macros[2].trigger_buttons) },
+    { 115, false, UINT8,  1, offsetof(device_t, config.macros[2].output_buttons) },
+    { 116, false, UINT16, 2, offsetof(device_t, config.macros[2].interval_ms) },
+
     /* Firmware */
     { 78, true,  UINT16, 2, offsetof(device_t, _running_fw.version) },
     { 79, true,  UINT32, 4, offsetof(device_t, _running_fw.checksum) },

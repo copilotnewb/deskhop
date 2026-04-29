@@ -39,6 +39,55 @@ CONFIG_ = [
     FormField(76, "Enforce Ports", None, {}, "uint8", "checkbox"),
 ]
 
+MACRO_MODIFIERS_ALL = {
+    0x00: "None",
+    0x01: "Left Ctrl",
+    0x02: "Left Shift",
+    0x04: "Left Alt",
+    0x08: "Left GUI",
+    0x10: "Right Ctrl",
+    0x20: "Right Shift",
+    0x40: "Right Alt",
+    0x80: "Right GUI",
+    0x03: "Left Ctrl + Left Shift",
+    0x30: "Right Ctrl + Right Shift",
+}
+
+MACRO_MODIFIERS_ANY = {
+    0x00: "None",
+    0x01: "Left Ctrl",
+    0x02: "Left Shift",
+    0x04: "Left Alt",
+    0x08: "Left GUI",
+    0x10: "Right Ctrl",
+    0x20: "Right Shift",
+    0x40: "Right Alt",
+    0x80: "Right GUI",
+    0x22: "Any Shift",
+    0x11: "Any Ctrl",
+    0x44: "Any Alt",
+}
+
+MACRO_BUTTONS = {
+    0x00: "None",
+    0x01: "Left",
+    0x02: "Right",
+    0x04: "Middle",
+    0x08: "Back",
+    0x10: "Forward",
+}
+
+MACRO_ = [
+    FormField(1004, "Macro", elem="label"),
+    FormField(0, "Enabled", None, {}, "uint8", "checkbox"),
+    FormField(1, "Mode", 0, {0: "Disabled", 1: "Repeat Mouse Click"}, "uint8"),
+    FormField(2, "Require All Modifiers", 0, MACRO_MODIFIERS_ALL, "uint8"),
+    FormField(3, "Require Any Modifier", 0, MACRO_MODIFIERS_ANY, "uint8"),
+    FormField(4, "Trigger Mouse Button", 0, MACRO_BUTTONS, "uint8"),
+    FormField(5, "Output Mouse Button", 1, MACRO_BUTTONS, "uint8"),
+    FormField(6, "Interval (ms)", 50, {"min": 10, "max": 1000}, "uint16", "range"),
+]
+
 OUTPUT_ = [
     FormField(1, "Screen Count", 1, {1: "1", 2: "2", 3: "3"}, "uint32"),
     FormField(2, "Speed X", 16, {"min": 1, "max": 100}, "int32", "range"),
@@ -80,3 +129,8 @@ def output_status():
 
 def output_config():
     return generate_output(0, data=CONFIG_)
+
+def output_macro(base, name):
+    output = generate_output(base, data=MACRO_)
+    output[0]["name"] = name
+    return output

@@ -45,6 +45,9 @@ if __name__ == "__main__":
         screen_B=output_B(),
         status=output_status(),
         config=output_config(),
+        macro_1=output_macro(90, "Macro 1"),
+        macro_2=output_macro(100, "Macro 2"),
+        macro_3=output_macro(110, "Macro 3"),
     )
 
     # Compress file and encode to base64

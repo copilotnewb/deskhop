@@ -1,20 +1,3 @@
-# vibe coded fork to allow commands from pc to deskhop for auto switching
-
-run kvm_gaze_switch.py for auto control with gaze/head rotation, make sure deskhop_switch_ctypes.py is in the same folder
-
-bash for windows deskhop_switch_ctypes.py for manual control
-Toggle (payload 0x01)
-python deskhop_switch_ctypes.py --vid 0x1209 --pid 0xC000 --cmd toggle
-
-Force output A (0x02)
-python deskhop_switch_ctypes.py --vid 0x1209 --pid 0xC000 --cmd A
-
-Force output B (0x03)
-python deskhop_switch_ctypes.py --vid 0x1209 --pid 0xC000 --cmd B
-
-Or send a raw payload byte with a custom Report ID
-python deskhop_switch_ctypes.py --vid 0x1209 --pid 0xC000 --report-id 0x10 --value 0x01
-
 # DeskHop - Fast Desktop Switching
 
 Did you ever notice how, in the crazy world of tech, there's always that one quirky little project trying to solve a problem so niche that its only competitors might be a left-handed screwdriver and a self-hiding alarm clock?
@@ -30,6 +13,7 @@ All I wanted was a way to use a keyboard shortcut to quickly switch outputs, pai
 - Completely **[free and open source](https://certification.oshwa.org/de000149.html)**
 - No noticeable delay when switching
 - Simply drag the mouse pointer between computers
+- Configurable mouse-button macros
 - No software installed
 - Affordable and obtainable components (<15€)
 - 3D printable snap-fit case
@@ -39,6 +23,50 @@ All I wanted was a way to use a keyboard shortcut to quickly switch outputs, pai
 [User Manual](misc/user-manual.pdf) is now available
 
 ![Open Source Hardware Logo](img/oshw.svg)
+
+------
+
+## Host-side switching command
+
+This build exposes a 1-byte HID feature report on the normal DeskHop HID interface so a local script can switch outputs from either connected computer. On Windows, use the zero-dependency ctypes helper:
+
+```sh
+python deskhop_switch_ctypes.py --vid 0x1209 --pid 0xC000 --cmd toggle
+python deskhop_switch_ctypes.py --vid 0x1209 --pid 0xC000 --cmd A
+python deskhop_switch_ctypes.py --vid 0x1209 --pid 0xC000 --cmd B
+```
+
+Command values are `0x01` toggle, `0x02` force output A, and `0x03` force output B. You can also list matching HID interfaces with:
+
+```sh
+python deskhop_switch_ctypes.py --vid 0x1209 --pid 0xC000 --list
+```
+
+The optional `kvm_gaze_switch.py` script uses the same helper for camera/head-pose based switching.
+
+------
+
+## Macro support
+
+This build adds three configurable macro slots in the web configuration page. The default macro is:
+
+```text
+Shift + middle click -> repeat normal left click every 50 ms
+```
+
+While the macro is active, DeskHop consumes the trigger middle-click and suppresses the trigger Shift modifier before forwarding reports to the computer. That means the generated output is a regular left click, not a middle click or Shift-click.
+
+Each macro slot currently supports repeated mouse-click output:
+
+- `Enabled`: turns the slot on or off
+- `Mode`: `Repeat Mouse Click`
+- `Require All Modifiers`: every selected modifier must be held
+- `Require Any Modifier`: at least one selected modifier must be held
+- `Trigger Mouse Button`: mouse button that starts the macro
+- `Output Mouse Button`: mouse button DeskHop emits
+- `Interval (ms)`: delay between repeated clicks
+
+After editing the WebUI templates, regenerate `webconfig/config.htm` before building firmware so the on-device config page includes the macro controls.
 
 ------
 
@@ -114,6 +142,12 @@ Alternatively, you can use the [pre-built images](https://github.com/hrvach/desk
 _Note_ - This is not an actual generic USB drive, you can't use it to copy files to it.
 
 **Option 2** - Using the ROM bootloader - hold the on-board button while connecting each Pico and copy the uf2 to the flash drive that appears. Images later than 0.6 support holding the button without having to fiddle around the power supply, but the "hold button while plugging" should always work, regardless of device state.
+
+**Option 3** - CDC Flash Command (Debug builds only) - If the firmware was built with `DH_DEBUG_CDC_FLASH=ON`, you can trigger bootloader mode via CDC serial command:
+```shell
+echo -n 'flash' > /dev/tty.usbmodem11104
+```
+This immediately resets the device into bootloader mode where it appears as "RPI-RP2" drive. This feature is intended for development workflows.
 
 ## Misc features
 
