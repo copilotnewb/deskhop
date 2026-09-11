@@ -28,6 +28,7 @@ endif()
 if(NOT PICO_PIO_USB_DIR)
   set(PICO_PIO_USB_DIR ${CMAKE_CURRENT_LIST_DIR}/Pico-PIO-USB CACHE PATH "Pico-PIO-USB source directory")
 endif()
+set(TINYUSB_AUDIO_HOST_DIR ${PICO_TINYUSB_PATH}/examples/host/audio_host/src)
 
 include(${PICO_SDK_PATH}/pico_sdk_import.cmake)
 
@@ -83,6 +84,7 @@ set(COMMON_SOURCES
   ${SRC_DIR}/usb.c
   ${SRC_DIR}/main.c
   ${SRC_DIR}/ramdisk.c
+  ${TINYUSB_AUDIO_HOST_DIR}/audio_app.c
   ${PICO_TINYUSB_PATH}/src/portable/raspberrypi/pio_usb/dcd_pio_usb.c
   ${PICO_TINYUSB_PATH}/src/portable/raspberrypi/pio_usb/hcd_pio_usb.c
 )
@@ -91,6 +93,7 @@ set(COMMON_SOURCES
 set(COMMON_INCLUDES
   ${SRC_DIR}/include
   ${PICO_PIO_USB_DIR}/src
+  ${TINYUSB_AUDIO_HOST_DIR}
 )
 
 ## Library Dependencies
