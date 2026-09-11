@@ -22,6 +22,8 @@
  *  Individual Task Functions
  *==============================================================================*/
 
+void audio_host_defer_task(device_t *);
+void audio_host_task(device_t *);
 void firmware_upgrade_task(device_t *);
 void heartbeat_output_task(device_t *);
 void kick_watchdog_task(device_t *);
