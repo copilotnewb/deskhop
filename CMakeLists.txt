@@ -92,6 +92,7 @@ set(COMMON_SOURCES
 ## Include Directories
 set(COMMON_INCLUDES
   ${SRC_DIR}/include
+  ${SRC_DIR}/audio
   ${PICO_PIO_USB_DIR}/src
   ${TINYUSB_AUDIO_HOST_DIR}
 )
