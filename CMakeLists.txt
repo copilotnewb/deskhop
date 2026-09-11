@@ -18,6 +18,17 @@ set(PICO_BOARD "pico")
 set(PICO_SDK_FETCH_FROM_GIT off)
 set(PICO_SDK_PATH ${CMAKE_CURRENT_LIST_DIR}/pico-sdk)
 set(SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/src)
+
+## USB dependency overrides
+## Milestone-1 CI points these at pinned external checkouts. The vendored paths
+## remain the fallback so the branch can still be configured like stock DeskHop.
+if(NOT PICO_TINYUSB_PATH)
+  set(PICO_TINYUSB_PATH ${PICO_SDK_PATH}/lib/tinyusb CACHE PATH "TinyUSB source directory")
+endif()
+if(NOT PICO_PIO_USB_DIR)
+  set(PICO_PIO_USB_DIR ${CMAKE_CURRENT_LIST_DIR}/Pico-PIO-USB CACHE PATH "Pico-PIO-USB source directory")
+endif()
+
 include(${PICO_SDK_PATH}/pico_sdk_import.cmake)
 
 ## Project Setup
@@ -33,8 +44,6 @@ set(CMAKE_C_FLAGS "-Ofast -Wall -mcpu=cortex-m0plus -mtune=cortex-m0plus -fstack
 pico_sdk_init()
 
 ## PIO USB Library Setup
-set(PICO_PIO_USB_DIR ${CMAKE_CURRENT_LIST_DIR}/Pico-PIO-USB)
-
 add_library(Pico-PIO-USB STATIC
   ${PICO_PIO_USB_DIR}/src/pio_usb.c
   ${PICO_PIO_USB_DIR}/src/pio_usb_host.c
@@ -49,7 +58,11 @@ target_link_libraries(Pico-PIO-USB PRIVATE
   hardware_pio
   hardware_dma
 )
-target_include_directories(Pico-PIO-USB PRIVATE ${PICO_PIO_USB_DIR})
+target_include_directories(Pico-PIO-USB PRIVATE ${PICO_PIO_USB_DIR}/src)
+target_compile_definitions(Pico-PIO-USB PRIVATE
+  PIO_USB_USE_TINYUSB=${PIO_USE_TINYUSB}
+  PIO_USB_EP_SIZE=384
+)
 
 ## Source Files
 set(COMMON_SOURCES
@@ -113,6 +126,7 @@ target_compile_definitions(${binary}
     VERSION_MAJOR=${VERSION_MAJOR}
     VERSION_MINOR=${VERSION_MINOR}
     PIO_USB_USE_TINYUSB=${PIO_USE_TINYUSB}
+    PIO_USB_EP_SIZE=384
     PIO_USB_DP_PIN_DEFAULT=${DP_PIN_DEFAULT}
     __disk_file_path__="${DISK_BIN}"
 )
