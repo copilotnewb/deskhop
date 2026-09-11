@@ -50,14 +50,16 @@ int main(void) {
 
 void core1_main() {
     static task_t tasks_core1[] = {
-        [0] = {.exec = &usb_host_task,           .frequency = _TOP()},       // .-> USB host task, needs to run as often as possible
-        [1] = {.exec = &packet_receiver_task,    .frequency = _TOP()},       // | Receive data over serial from the other board
-        [2] = {.exec = &led_blinking_task,       .frequency = _HZ(30)},      // | Check if LED needs blinking
-        [3] = {.exec = &led_sync_task,           .frequency = _HZ(30)},      // | Sync LED state if needed
-        [4] = {.exec = &screensaver_task,        .frequency = _HZ(120)},     // | Handle "screensaver" movements
-        [5] = {.exec = &firmware_upgrade_task,   .frequency = _HZ(4000)},    // | Send firmware to the other board if needed
-        [6] = {.exec = &heartbeat_output_task,   .frequency = _HZ(1)},       // | Output periodic heartbeats
-    };                                                                       // `----- then go back and repeat forever
+        [0] = {.exec = &usb_host_task,            .frequency = _TOP()},      // .-> USB host task, needs to run as often as possible
+        [1] = {.exec = &audio_host_task,          .frequency = _TOP()},      // | Service TinyUSB Audio Host application FIFOs
+        [2] = {.exec = &audio_host_defer_task,    .frequency = _TOP()},      // | Run delayed Audio Host stream phase/restart callbacks
+        [3] = {.exec = &packet_receiver_task,     .frequency = _TOP()},      // | Receive data over serial from the other board
+        [4] = {.exec = &led_blinking_task,        .frequency = _HZ(30)},     // | Check if LED needs blinking
+        [5] = {.exec = &led_sync_task,            .frequency = _HZ(30)},     // | Sync LED state if needed
+        [6] = {.exec = &screensaver_task,         .frequency = _HZ(120)},    // | Handle "screensaver" movements
+        [7] = {.exec = &firmware_upgrade_task,    .frequency = _HZ(4000)},   // | Send firmware to the other board if needed
+        [8] = {.exec = &heartbeat_output_task,    .frequency = _HZ(1)},      // | Output periodic heartbeats
+    };                                                                        // `----- then go back and repeat forever
     const int NUM_TASKS = ARRAY_SIZE(tasks_core1);
 
     while (true) {
