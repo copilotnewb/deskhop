@@ -85,6 +85,7 @@ set(COMMON_SOURCES
   ${SRC_DIR}/keyboard.c
   ${SRC_DIR}/mouse.c
   ${SRC_DIR}/tasks.c
+  ${SRC_DIR}/audio_host_tasks.c
   ${SRC_DIR}/led.c
   ${SRC_DIR}/uart.c
   ${SRC_DIR}/usb.c
