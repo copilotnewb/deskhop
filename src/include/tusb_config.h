@@ -157,4 +157,12 @@ extern int dh_debug_printf(const char *__restrict __format, ...);
 #define CFG_TUH_HID_EPIN_BUFSIZE  64
 #define CFG_TUH_HID_EPOUT_BUFSIZE 64
 
+// Enable one USB Audio Class host device alongside Hub + HID.
+#define CFG_TUH_AUDIO 1
+#define CFG_TUH_AUDIO_PROTOCOLS (TUH_AUDIO_PROTOCOL_UAC1 | TUH_AUDIO_PROTOCOL_UAC2)
+#define CFG_TUH_AUDIO_MAX 1
+#define CFG_TUH_AUDIO_EPIN_BUFSIZE 256
+#define CFG_TUH_AUDIO_EPOUT_BUFSIZE 384
+#define CFG_TUH_AUDIO_STREAM_BUFSIZE 1024
+
 #endif /* _TUSB_CONFIG_H_ */
