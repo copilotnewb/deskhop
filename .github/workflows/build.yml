@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - deskhop-audio
   pull_request:
     branches: 
       - main
+      - deskhop-audio
   workflow_dispatch:
 
 jobs:
@@ -22,8 +24,22 @@ jobs:
           libnewlib-arm-none-eabi \
           dosfstools
 
-    - name: Checkout
+    - name: Checkout DeskHop
       uses: actions/checkout@v4
+
+    - name: Checkout proven Pico-PIO-USB
+      uses: actions/checkout@v4
+      with:
+        repository: copilotnewb/Pico-PIO-USB
+        ref: 4db0782fe2c621cff5a4f405d02b591ca562007c
+        path: deps/Pico-PIO-USB
+
+    - name: Checkout pinned TinyUSB
+      uses: actions/checkout@v4
+      with:
+        repository: hathach/tinyusb
+        ref: ad54f72e10859596044918b76ed5a73402ca545b
+        path: deps/tinyusb
 
     - name: Render webconfig
       shell: bash
@@ -38,8 +54,10 @@ jobs:
     - name: Build firmware
       shell: bash
       run: |
-        cmake -S . -B build
-        cmake --build build
+        cmake -S . -B build \
+          -DPICO_PIO_USB_DIR="$GITHUB_WORKSPACE/deps/Pico-PIO-USB" \
+          -DPICO_TINYUSB_PATH="$GITHUB_WORKSPACE/deps/tinyusb"
+        cmake --build build --parallel 2
 
     - name: Publish artifacts
       uses: actions/upload-artifact@v4
