@@ -65,6 +65,12 @@ target_compile_definitions(Pico-PIO-USB PRIVATE
   PIO_USB_EP_SIZE=384
 )
 
+## TinyUSB's audio example exports an LED task with the same name as DeskHop.
+## Rename only that example symbol; DeskHop remains the sole owner of its LED.
+set_source_files_properties(${TINYUSB_AUDIO_HOST_DIR}/audio_app.c PROPERTIES
+  COMPILE_DEFINITIONS "led_blinking_task=audio_example_led_blinking_task"
+)
+
 ## Source Files
 set(COMMON_SOURCES
   ${SRC_DIR}/usb_descriptors.c
